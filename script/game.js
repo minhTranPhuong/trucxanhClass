@@ -23,7 +23,7 @@ class Game extends Node {
         this.y = 0;
         this.width = 600;
         this.height = 600;
-        this.elm.style.backgroundImage = "url(../../images/trucxanh_bg.jpg)";
+        this.elm.style.backgroundImage = "url(./images/trucxanh_bg.jpg)";
     }
 
     _createCards() {
