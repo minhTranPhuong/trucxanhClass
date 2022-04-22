@@ -75,7 +75,7 @@ class Game extends Node {
             setTimeout(() => {
                 this.cards[1] = card
                 this.compareCard(this.cards[0], this.cards[1]);
-            }, 3000)
+            }, 1000)
         }
     }
 
@@ -111,7 +111,7 @@ class Game extends Node {
         this.addChild(stateGame);
 
         this.statusGame(state);
-        var buttonReset = this.buttonReset();
+        var buttonReset = this.CreateReset();
         stateGame.addChild(buttonReset);
     }
 
@@ -123,7 +123,7 @@ class Game extends Node {
         this.score.fontSize = 100;
         this.score.elm.style.transition = "3s"
     }
-    buttonReset() {
+    CreateReset() {
         var buttonReset = new Label();
         buttonReset.x = this.width / 2;
         buttonReset.y = this.height / 2;
@@ -157,12 +157,12 @@ class Game extends Node {
         console.log(status)
         this.tl = gsap.timeline({ paused: true });
         this.tl.to(card.sprite, { scaleX: scalex, duration: 0.2 },bool);
-        this.tl.to(card.Label, { opacity: 0, duration: 0.2 },bool);
+        this.tl.to(card.Label, { opacity: scalex, duration: 0.2 },bool);
         this.tl.call(() => {
             status();
         })
         this.tl.to(card.sprite, { scaleX: scaley, duration: 0.2 },bool);
-        this.tl.to(card.Label, { opacity: 1, duration: 0.2 },bool);
+        this.tl.to(card.Label, { opacity: scaley, duration: 0.2 },bool);
         this.tl.play();
     }
 
