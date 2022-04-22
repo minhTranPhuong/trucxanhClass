@@ -5,8 +5,23 @@ export class Node { // entity
         this._y = 0;
         this._width = 0;
         this._height = 0;
+        this._opacity = 1;
         this.elm = this._createElement();
         this.children = [];
+    }
+
+    set opacity(opacity) 
+    {
+        this._opacity = opacity
+        this.elm.style.opacity = this._opacity;
+    }
+
+
+    get opacity(){return this._opacity}
+    set opacity(opacity) 
+    {
+        this._opacity = opacity
+        this.elm.style.opacity = this._opacity;
     }
 
     get x() { return this._x; }
@@ -50,7 +65,7 @@ export class Node { // entity
         let index = this.children.indexOf(node);
         if (index === -1) return;
 
-        this.elm.removeChild(node.elm   );
+        this.elm.removeChild(node.elm);
         this.children.splice(index, 1);
     }
 
