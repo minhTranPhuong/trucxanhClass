@@ -33,7 +33,7 @@ export class Card extends Node {
     }
     setValue(value) {
         this.value = value;
-        this.sprite.path = "http://127.0.0.1:5500/images/trucxanh" + value + ".jpg";
+        this.sprite.path = "./images/trucxanh" + value + ".jpg";
     }
     open() {
         console.log(this)
