@@ -27,19 +27,23 @@ class Game extends Node {
     }
 
     _createCards() {
-        this.arrImage = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9]
+        this.arrImage = [];//[0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9]
         //this._waffleCard();
+        this.tl = gsap.timeline();
         for (var i = 0; i < 20; i++) {
             var card = new Card(i);
-            let col = i % 5;
-            let row = Math.floor(i / 5);
-            card.x = col * 120 + 10;
-            card.y = row * 120 + 100;
-            card.setValue(this.arrImage[i]);
+            card.x = 250;
+            card.y = 250;
+            card.setValue(i % 10);
             card.close();
             card.elm.addEventListener("click", this.onClickCard.bind(this, card));
             this.addChild(card)
+            this.arrImage.push(card);
+
+            this.tl.from(card, { x: 250, y: 250, opacity: 0, duration: 0.08 })
+                .from(card.sprite.elm, { zIndex: 1, duration: 0.08 })
         }
+        this._divideCard(this.arrImage);
     }
 
     _waffleCard() {
@@ -62,49 +66,38 @@ class Game extends Node {
         if (!this.canClick) return;
 
         if (this.cards.length == 1 && this.cards[0].index === card.index) return;
-        this.animationCard(card);
         if (this.cards[0] === undefined) {
             this.cards[0] = card;
-            card.open();
+            this._flipCard(card, card.open.bind(card))
         } else {
-            card.open();
+            this._flipCard(card, card.open.bind(card))
             this.canClick = false;
             setTimeout(() => {
                 this.cards[1] = card
                 this.compareCard(this.cards[0], this.cards[1]);
-            }, 500)
+            }, 3000)
         }
     }
 
     compareCard(fistCard, secondCard) {
+        var score = Number(this.score.text);
         if (fistCard.value === secondCard.value) {
-            this.removeChild(fistCard)
-            this.removeChild(secondCard)
-            this.score.text = (Number(this.score.text) + 1000) + "";
+            score = score + 1000;
+            this.tl.play();
             this.pickCorrect++;
+            this._loadScore(score)
             if (this.pickCorrect == 10) this.resetGame("WIN")
+            this._disapearCard(fistCard);
+            this._disapearCard(secondCard);
         } else {
-            fistCard.close();
-            secondCard.close();
-            this.score.text = (Number(this.score.text) - 500) + "";
+            score = score - 500;
+            this._loadScore(score)
+            this._flipCard(fistCard, fistCard.close.bind(fistCard));
+            this._flipCard(secondCard, secondCard.close.bind(secondCard));
             if (Number(this.score.text) == 0) this.resetGame("LOSE")
         }
         this.canClick = true;
-        this.resetAnimation(this.cards[0], this.cards[1]);
         this.cards = [];
-    }
-
-    animationCard(card) {
-        card.elm.style.transform = "rotatey(180deg)";
-        card.x = card.x + 100;
-        card.elm.style.transition = "0.3s";
-    }
-
-    resetAnimation(card1, card2) {
-        card1.elm.style.transform = "";
-        card1.x = card1.x - 100;
-        card2.elm.style.transform = "";
-        card2.x = card2.x - 100;
     }
 
     resetGame(state) {
@@ -139,13 +132,8 @@ class Game extends Node {
         buttonReset.elm.style.backgroundColor = "orange";
         buttonReset.elm.style.cursor = "pointer";
         buttonReset.elm.addEventListener("click", () => {
-            this.score.text = "10000";
-            this.score.fontSize = 30;
-            this.score.elm.style.transition = "0.5s"
-            setTimeout(() => {
-                document.getElementsByTagName("div")[0].innerHTML = "";
-                this._init();
-            }, 500)
+            document.getElementsByTagName("div")[0].innerHTML = "";
+            this._init();
         });
         buttonReset.elm.addEventListener("mouseover", () => {
             buttonReset.elm.style.backgroundColor = "aliceBlue"
@@ -155,6 +143,52 @@ class Game extends Node {
         })
         return buttonReset;
     }
+    _divideCard(arrCards) {
+        for (var i = arrCards.length - 1 ; i >= 0; i--) {
+            let col = i % 5;
+            let row = Math.floor(i / 5);
+            var x = col * 120 + 10;
+            var y = row * 120 + 100;
+            this.tl.to(arrCards[i], { ease: Back.easeOut.config(6), x: x, y: y, duration: 0.1 });
+        }
+    }
+
+    _flipCard(card, status) {
+        console.log(status)
+        this.tl = gsap.timeline({ paused: true });
+        this.tl.to(card.sprite, { scaleX: 0, duration: 0.8 });
+        this.tl.to(card.Label, { opacity: 0, duration: 0.8 });
+        this.tl.call(() => {
+            status();
+        })
+        this.tl.to(card.sprite, { scaleX: 1, duration: 0.8 });
+        this.tl.to(card.Label, { opacity: 1, duration: 0.8 });
+        this.tl.play();
+    }
+
+    _disapearCard(secondCard) {
+        console.log(secondCard.sprite)
+        secondCard.sprite.elm.style.zIndex = 1;
+        this.tl = gsap.timeline({ paused: true });
+        this.tl.to(secondCard.sprite, { scale: 1, duration: 1 });
+        this.tl.to(secondCard.sprite, { scale: 2, duration: 1 });
+        this.tl.play();
+        this.tl.call(() => {
+            this.removeChild(secondCard);
+        })
+    }
+
+    _loadScore(score) {
+        console.log(score,this.score.text)
+        this.tl = gsap.timeline({ paused: true });
+        this.tl.to(this.score, {
+            text: score, duration: 1, onUpdate: () => {
+                this.score.text = Math.floor(Number(this.score.text));
+            }
+        });
+        this.tl.play();
+    }
+
 }
 
 let game = new Game();
