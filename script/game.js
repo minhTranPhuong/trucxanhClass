@@ -19,8 +19,8 @@ class Game extends Node {
 
     _createBackGround() {
         this.cards = [];
-        this.x = 0;
-        this.y = 0;
+        this.x = 200;
+        this.y = 70;
         this.width = 600;
         this.height = 600;
         this.elm.style.backgroundImage = "url(./images/trucxanh_bg.jpg)";
@@ -92,8 +92,8 @@ class Game extends Node {
         } else {
             score = score - 500;
             this._loadScore(score)
-            this._flipCard(fistCard, fistCard.close.bind(fistCard));
-            this._flipCard(secondCard, secondCard.close.bind(secondCard));
+            this._flipCard(fistCard, fistCard.close.bind(fistCard) , 1 , 0 , 1);
+            this._flipCard(secondCard, secondCard.close.bind(secondCard) , 1 , 0 , 1);
             if (Number(this.score.text) == 0) this.resetGame("LOSE")
         }
         this.canClick = true;
@@ -153,16 +153,16 @@ class Game extends Node {
         }
     }
 
-    _flipCard(card, status) {
+    _flipCard(card, status , scalex = 0, scaley = 1, bool = null) {
         console.log(status)
         this.tl = gsap.timeline({ paused: true });
-        this.tl.to(card.sprite, { scaleX: 0, duration: 0.8 });
-        this.tl.to(card.Label, { opacity: 0, duration: 0.8 });
+        this.tl.to(card.sprite, { scaleX: scalex, duration: 0.2 },bool);
+        this.tl.to(card.Label, { opacity: 0, duration: 0.2 },bool);
         this.tl.call(() => {
             status();
         })
-        this.tl.to(card.sprite, { scaleX: 1, duration: 0.8 });
-        this.tl.to(card.Label, { opacity: 1, duration: 0.8 });
+        this.tl.to(card.sprite, { scaleX: scaley, duration: 0.2 },bool);
+        this.tl.to(card.Label, { opacity: 1, duration: 0.2 },bool);
         this.tl.play();
     }
 
