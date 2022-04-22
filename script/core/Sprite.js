@@ -3,6 +3,24 @@ export class Sprite extends Node {
     constructor() {
         super();
         this._path = "";
+        this._scaleX = 0;
+        this._scale = 1;
+    }
+
+    get scaleX(){
+        return this._scaleX;
+    }
+    set scaleX(value){
+        this._scaleX = value;
+        this.elm.style.transform = `scaleX(${this._scaleX})`;
+    }
+
+    get scale(){
+        return this._scaleX;
+    }
+    set scale(value){
+        this._scale = value;
+        this.elm.style.transform = `scale(${this._scale})`;
     }
 
     get path(){
