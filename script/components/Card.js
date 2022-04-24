@@ -7,10 +7,32 @@ export class Card extends Node {
         super();
         this.index = index;
         this.value = null;
+        this._scaleX = 0; 
+        this._scale = 1;
+        //this.elm.style.transform = "scaleX(1)";
         this._createSprite();
         this._createCover();
         this._createLabel();
     }
+
+    get scaleX() {
+        return this._scaleX;
+    }
+
+    set scaleX(value) {
+        this._scaleX = value;
+        this.elm.style.transform = `scaleX(${value})`;
+    }
+
+    get scale() {
+        return this._scaleX;
+    }
+
+    set scale(value) {
+        this._scale = value;
+        this.elm.style.transform = `scale(${value})`;
+    }
+
     _createSprite() {
         this.sprite = new Sprite();
         this.sprite.width = 100;
@@ -29,6 +51,8 @@ export class Card extends Node {
     _createLabel() {
         this.Label = new Label;
         this.Label.text = this.index+1;
+        this.Label.x = 40;
+        this.Label.y = 40;
         this.addChild(this.Label);
     }
     setValue(value) {
@@ -36,11 +60,23 @@ export class Card extends Node {
         this.sprite.path = "./images/trucxanh" + value + ".jpg";
     }
     open() {
-        console.log(this)
-        this.cover.elm.style.display = "none";
+        this.tl = gsap.timeline({ paused: true });
+        this.tl.to(this, { scaleX: 0, duration: 0.8 });
+        this.tl.call(() => {
+            this.cover.elm.style.display = "none";
+        })
+        this.tl.to(this, { scaleX: 1, duration: 0.8 });
+        this.tl.play();
     }
     close() {
-        this.cover.elm.style.display = "block"
+        this.elm.style.transform = "scaleX(1)";
+        this.tl = gsap.timeline({ paused: true });
+        this.tl.to(this, { scaleX: 0, duration: 0.8 , delay: 1.6 });
+        this.tl.call(() => {
+            this.cover.elm.style.display = "block";
+        })
+        this.tl.to(this, { scaleX: 1, duration: 0.8 });
+        this.tl.play();
     }
     hide() {
         //this.elm.removeChild(this);

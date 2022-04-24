@@ -10,16 +10,14 @@ export class Node { // entity
         this.children = [];
     }
 
-    set opacity(opacity) 
-    {
+    set opacity(opacity) {
         this._opacity = opacity
         this.elm.style.opacity = this._opacity;
     }
 
 
-    get opacity(){return this._opacity}
-    set opacity(opacity) 
-    {
+    get opacity() { return this._opacity }
+    set opacity(opacity) {
         this._opacity = opacity
         this.elm.style.opacity = this._opacity;
     }
@@ -62,11 +60,27 @@ export class Node { // entity
         this.children.push(node);
     }
     removeChild(node) {
-        let index = this.children.indexOf(node);
-        if (index === -1) return;
+        node.elm.style.zIndex = 1;
+        this.tl = gsap.timeline({ paused: true });
+        this.tl.to(node, { scale: 2, duration: 0.8, delay: 1.6 })
+            .to(node, { scale: 0, duration: 0.8 });
+        this.tl.call(() => {
+            let index = this.children.indexOf(node);
+            if (index === -1) return;
 
-        this.elm.removeChild(node.elm);
-        this.children.splice(index, 1);
+            this.elm.removeChild(node.elm);
+            this.children.splice(index, 1);
+        })
+        this.tl.play();
+    }
+    removeAllChild() {
+        for (var i = 0; i < this.children.length; i++) {
+            console.log(this.children[i]);
+            let index = this.children.indexOf(this.children[i]);
+            if (index === -1) return;
+            this.elm.removeChild(this.children[i].elm);
+            this.children.splice(index, 1);
+        }
     }
 
 }

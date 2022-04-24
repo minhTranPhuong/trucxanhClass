@@ -3,7 +3,7 @@ export class Sprite extends Node {
     constructor() {
         super();
         this._path = "";
-        this._scaleX = 0;
+        this._scaleX = 1;
         this._scale = 1;
     }
 

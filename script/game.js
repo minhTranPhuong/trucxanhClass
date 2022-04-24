@@ -23,6 +23,7 @@ class Game extends Node {
         this.y = 70;
         this.width = 600;
         this.height = 600;
+        this.elm.style.backgroundSize = "cover"
         this.elm.style.backgroundImage = "url(./images/trucxanh_bg.jpg)";
     }
 
@@ -34,8 +35,15 @@ class Game extends Node {
             var card = new Card(i);
             card.x = 250;
             card.y = 250;
+            card.width = 100;
+            card.height = 100;
+            card.elm.style.cursor = 'pointer';
+            card.sprite.elm.style.borderRadius = "15px"
+            card.cover.elm.style.borderRadius = "15px"
+            card.elm.style.backgroundSize = "cover"
+            card.scaleX = 1;
             card.setValue(i % 10);
-            card.close();
+            card.cover.elm.style.display = "block";
             card.elm.addEventListener("click", this.onClickCard.bind(this, card));
             this.addChild(card)
             this.arrImage.push(card);
@@ -68,9 +76,9 @@ class Game extends Node {
         if (this.cards.length == 1 && this.cards[0].index === card.index) return;
         if (this.cards[0] === undefined) {
             this.cards[0] = card;
-            this._flipCard(card, card.open.bind(card))
+            card.open();
         } else {
-            this._flipCard(card, card.open.bind(card))
+            card.open();
             this.canClick = false;
             setTimeout(() => {
                 this.cards[1] = card
@@ -86,21 +94,21 @@ class Game extends Node {
             this.tl.play();
             this.pickCorrect++;
             this._loadScore(score)
-            if (this.pickCorrect == 10) this.resetGame("WIN")
-            this._disapearCard(fistCard);
-            this._disapearCard(secondCard);
+            if (this.pickCorrect == 10) this.resetGame()
+            this.removeChild(fistCard);
+            this.removeChild(secondCard);
         } else {
             score = score - 500;
             this._loadScore(score)
-            this._flipCard(fistCard, fistCard.close.bind(fistCard) , 1 , 0 , 1);
-            this._flipCard(secondCard, secondCard.close.bind(secondCard) , 1 , 0 , 1);
-            if (Number(this.score.text) == 0) this.resetGame("LOSE")
+            fistCard.close();
+            secondCard.close();
+            if (Number(this.score.text) == 0) this.resetGame()
         }
-        this.canClick = true;
+        setTimeout(() => { this.canClick = true; }, 1600)
         this.cards = [];
     }
 
-    resetGame(state) {
+    resetGame() {
         var stateGame = new Label();
         stateGame.x = 0;
         stateGame.y = 0;
@@ -110,29 +118,26 @@ class Game extends Node {
         stateGame.elm.style.zIndex = 0.5;
         this.addChild(stateGame);
 
-        this.statusGame(state);
-        var buttonReset = this.CreateReset();
+        var buttonReset = this.CreateButtonReset(stateGame);
         stateGame.addChild(buttonReset);
     }
 
-    statusGame(state) {
-        this.score.text = state;
-        this.score.elm.style.color = "red";
-        this.score.elm.style.fontStyle = "bold";
-        this.score.elm.style.zIndex = 1;
-        this.score.fontSize = 100;
-        this.score.elm.style.transition = "3s"
-    }
-    CreateReset() {
+    CreateButtonReset(stateGame) {
         var buttonReset = new Label();
+        var styleButton = {
+            "borderRadius": "5px",
+            "backgroundColor": "orange",
+            "cursor": "pointer",
+        }
         buttonReset.x = this.width / 2;
         buttonReset.y = this.height / 2;
         buttonReset.text = "RE-play";
-        buttonReset.elm.style.borderRadius = "5px";
-        buttonReset.elm.style.backgroundColor = "orange";
-        buttonReset.elm.style.cursor = "pointer";
+        Object.assign(buttonReset, styleButton);
         buttonReset.elm.addEventListener("click", () => {
-            document.getElementsByTagName("div")[0].innerHTML = "";
+            stateGame.elm.style.display = "none";
+            this.removeAllChild();
+            this.removeChild(stateGame);
+            this.removeChild(buttonReset);
             this._init();
         });
         buttonReset.elm.addEventListener("mouseover", () => {
@@ -144,7 +149,7 @@ class Game extends Node {
         return buttonReset;
     }
     _divideCard(arrCards) {
-        for (var i = arrCards.length - 1 ; i >= 0; i--) {
+        for (var i = arrCards.length - 1; i >= 0; i--) {
             let col = i % 5;
             let row = Math.floor(i / 5);
             var x = col * 120 + 10;
@@ -153,33 +158,8 @@ class Game extends Node {
         }
     }
 
-    _flipCard(card, status , scalex = 0, scaley = 1, bool = null) {
-        console.log(status)
-        this.tl = gsap.timeline({ paused: true });
-        this.tl.to(card.sprite, { scaleX: scalex, duration: 0.2 },bool);
-        this.tl.to(card.Label, { opacity: scalex, duration: 0.2 },bool);
-        this.tl.call(() => {
-            status();
-        })
-        this.tl.to(card.sprite, { scaleX: scaley, duration: 0.2 },bool);
-        this.tl.to(card.Label, { opacity: scaley, duration: 0.2 },bool);
-        this.tl.play();
-    }
-
-    _disapearCard(secondCard) {
-        console.log(secondCard.sprite)
-        secondCard.sprite.elm.style.zIndex = 1;
-        this.tl = gsap.timeline({ paused: true });
-        this.tl.to(secondCard.sprite, { scale: 1, duration: 1 });
-        this.tl.to(secondCard.sprite, { scale: 2, duration: 1 });
-        this.tl.play();
-        this.tl.call(() => {
-            this.removeChild(secondCard);
-        })
-    }
-
     _loadScore(score) {
-        console.log(score,this.score.text)
+        console.log(score, this.score.text)
         this.tl = gsap.timeline({ paused: true });
         this.tl.to(this.score, {
             text: score, duration: 1, onUpdate: () => {
@@ -188,7 +168,6 @@ class Game extends Node {
         });
         this.tl.play();
     }
-
 }
 
 let game = new Game();
