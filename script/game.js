@@ -39,7 +39,6 @@ class Game extends Node {
                 "height": 100,
                 "scaleX": 1,
             }
-
             var styleCard = {
                 "cursor": "pointer",
                 "backgroundSize": "cover",
@@ -56,11 +55,11 @@ class Game extends Node {
             // animation fadein
             this.tl.from(card, { x: 250, y: 250, opacity: 0, duration: 0.02 })
                 .from(card.cover.elm, { display: "none", duration: 0.02 });
+
             // Nếu reset lại game thì không add card vào this.children và không add event cho card nữa
             if (this.children[i]) continue;
             card.elm.addEventListener("click", this.onClickCard.bind(this, card));
             this.addChild(card)
-
         }
         this.tl.play();
         this.tl.call(() => { this._divideCard() });
