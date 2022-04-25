@@ -17,7 +17,7 @@ class Game extends Node {
             this._createCards();
             this._createScore();
             this.canClick = true;
-            this.pickCorrect = 9;
+            this.pickCorrect = 0;
             this.cardPicked = [];
             buttonPlay.elm.style.display = "none";
             this.elm.removeChild(buttonPlay.elm)
@@ -163,7 +163,7 @@ class Game extends Node {
         buttonReset.elm.addEventListener("click", () => {
             stateGame.elm.style.display = "none";
             this.score.text = "10000";
-            this.pickCorrect = 9;
+            this.pickCorrect = 0;
             this._createCards();
             this.elm.removeChild(stateGame.elm);
         });
