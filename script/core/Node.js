@@ -59,20 +59,18 @@ export class Node { // entity
         this.elm.appendChild(node.elm);
         this.children.push(node);
     }
+
     removeChild(node) {
         node.elm.style.zIndex = 1;
         this.tl = gsap.timeline({ paused: true });
-        this.tl.to(node, { scale: 2, duration: 0.8, delay: 1.6 })
-            .to(node, { scale: 0, duration: 0.8 });
+        this.tl.to(node, { scale: 2, duration: 0.2, delay: 0.4 })
+            .to(node, { scale: 0, duration: 0.2 });
         this.tl.call(() => {
-            let index = this.children.indexOf(node);
-            if (index === -1) return;
-
-            this.elm.removeChild(node.elm);
-            this.children.splice(index, 1);
+            node.elm.style.display = "none"
         })
         this.tl.play();
     }
+    
     removeAllChild() {
         for (var i = 0; i < this.children.length; i++) {
             console.log(this.children[i]);

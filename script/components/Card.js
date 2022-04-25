@@ -61,21 +61,21 @@ export class Card extends Node {
     }
     open() {
         this.tl = gsap.timeline({ paused: true });
-        this.tl.to(this, { scaleX: 0, duration: 0.8 });
+        this.tl.to(this, { scaleX: 0, duration: 0.4 });
         this.tl.call(() => {
             this.cover.elm.style.display = "none";
         })
-        this.tl.to(this, { scaleX: 1, duration: 0.8 });
+        this.tl.to(this, { scaleX: 1, duration: 0.4 });
         this.tl.play();
     }
     close() {
         this.elm.style.transform = "scaleX(1)";
         this.tl = gsap.timeline({ paused: true });
-        this.tl.to(this, { scaleX: 0, duration: 0.8 , delay: 1.6 });
+        this.tl.to(this, { scaleX: 0, duration: 0.4 , delay: 0.8 });
         this.tl.call(() => {
             this.cover.elm.style.display = "block";
         })
-        this.tl.to(this, { scaleX: 1, duration: 0.8 });
+        this.tl.to(this, { scaleX: 1, duration: 0.4 });
         this.tl.play();
     }
     hide() {
